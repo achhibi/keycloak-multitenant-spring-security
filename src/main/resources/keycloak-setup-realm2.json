@@ -1,0 +1,101 @@
+{
+  "realm": "AMCH",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "sfeir_client-2",
+      "redirectUris": ["http://localhost:8090/*"],
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false
+    }
+  ],
+  "roles": {
+    "client": {
+      "sfeir_client": [
+        {
+          "name": "user",
+          "clientRole": true
+        },
+        {
+          "name": "admin",
+          "clientRole": true
+        }
+      ]
+    },
+    "realm": [
+      {
+        "name": "app_user",
+        "composite": true,
+        "composites": {
+          "client": {
+            "sfeir_client": [
+              "user"
+            ]
+          }
+        }
+      },
+      {
+        "name": "app_admin",
+        "composite": true,
+        "composites": {
+          "client": {
+            "sfeir_client": [
+              "admin"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "user1",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "user1@sfeir.com",
+      "firstName": "User",
+      "lastName": "One",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["app_admin"]
+    },
+    {
+      "username": "user3",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "user3@sfeir.com",
+      "firstName": "User",
+      "lastName": "33",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["app_user"]
+    },
+    {
+      "username": "user2",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "userE@sfeir.com",
+      "firstName": "User",
+      "lastName": "Two",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["app_user", "app_admin"]
+    }
+  ]
+}
