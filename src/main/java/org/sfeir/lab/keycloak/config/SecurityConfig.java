@@ -12,7 +12,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver;
 import org.springframework.security.web.SecurityFilterChain;
@@ -52,13 +56,36 @@ public class SecurityConfig {
         Map<String, AuthenticationManager> authenticationManagers = new HashMap<>();
 
         for (String issuer : issuersProperties.issuers()) {
-            JwtAuthenticationProvider provider = new JwtAuthenticationProvider(
-                    JwtDecoders.fromIssuerLocation(issuer));
+            NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withIssuerLocation(issuer).build();
+            jwtDecoder.setJwtValidator(getJwtOAuth2TokenValidator(issuer));
+
+            JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtDecoder);
             provider.setJwtAuthenticationConverter(keycloakJwtConverter);
             authenticationManagers.put(issuer, provider::authenticate);
         }
 
         return new JwtIssuerAuthenticationManagerResolver(authenticationManagers::get);
+    }
+
+    private static OAuth2TokenValidator<Jwt> getJwtOAuth2TokenValidator(final String issuer) {
+        OAuth2TokenValidator<Jwt> jwtOAuth2TokenValidator = jwt -> {
+
+            if (jwt == null) {
+                return OAuth2TokenValidatorResult.failure(new OAuth2Error("invalid_token", "JWT algorithm not found.", null));
+            }
+
+            String algorithm = jwt.getHeaders().get("alg").toString();
+            if (algorithm == null || algorithm.equalsIgnoreCase("none")) {
+                return OAuth2TokenValidatorResult.failure(new OAuth2Error("invalid_token", "Invalid JWT algorithm", null));
+            }
+
+            return OAuth2TokenValidatorResult.success();
+        };
+
+        OAuth2TokenValidator<Jwt> defaultValidators = JwtValidators.createDefaultWithIssuer(issuer);
+
+
+        return new DelegatingOAuth2TokenValidator<>(defaultValidators, jwtOAuth2TokenValidator);
     }
 
 }
