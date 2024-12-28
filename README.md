@@ -1,8 +1,9 @@
 # Multi-Tenant avec Keycloak et Spring Security OAuth2
 
-Ce projet présente une implémentation avancée d'un serveur de ressources **OAuth2 multi-tenant** basé sur Spring Security et Keycloak.
-Il propose une architecture permettant de gérer l'authentification et l'autorisation à travers **plusieurs realms Keycloak**.
+This project provides an advanced implementation of a multi-tenant OAuth2 resource server based on Spring Security and Keycloak. It features an architecture designed to manage authentication and authorization across multiple Keycloak realms.
+
+## Multi-tenant support: Handles multiple tenants using Keycloak realms.
+
+## Authentication and authorization: Based on the OAuth2 standard and integrated with Spring Security.
 
 
-* Support multi-tenant : gestion de plusieurs tenants à l'aide de realms Keycloak.
-* Authentification et autorisation : basé sur le standard OAuth2 et intégré à Spring Security.
