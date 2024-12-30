@@ -14,5 +14,6 @@ This project provides an advanced implementation of a multi-tenant OAuth2 resour
   - Validates access tokens issued by Keycloak, ensuring secure interaction between clients and the resource server.  
 
 - **Scalable and Flexible**  
+
   - Designed to support a large number of tenants with minimal performance impact.  
   - Allows easy customization and integration with existing Spring Boot applications. 
